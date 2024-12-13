@@ -1488,7 +1488,7 @@ class Main {
 		$triggers = isset( $document->latest_settings['mark_printed'] ) && is_array( $document->latest_settings['mark_printed'] ) ? $document->latest_settings['mark_printed'] : [];
 		if ( ! empty( $document ) && ! $this->is_document_printed( $document ) ) {
 			if ( ! empty( $order = $document->order ) && ! empty( $trigger ) && in_array( $trigger, $triggers ) && apply_filters( 'wpo_wcpdf_allow_mark_document_printed', true, $document, $trigger ) ) {
-				if ( 'shop_order' === $order->get_type() ) {
+				if ( apply_filters( 'wpo_wcpdf_shop_order_type', 'shop_order', $order ) === $order->get_type() ) {
 					$data = [
 						'date'    => time(),
 						'trigger' => $trigger,
@@ -1511,7 +1511,7 @@ class Main {
 		if ( ! empty( $document ) && $this->is_document_printed( $document ) ) {
 			if ( ! empty( $order = $document->order ) && apply_filters( 'wpo_wcpdf_allow_unmark_document_printed', true, $document ) ) {
 				$meta_key = "_wcpdf_{$document->slug}_printed";
-				if ( 'shop_order' === $order->get_type() && ! empty( $order->get_meta( $meta_key ) ) ) {
+				if ( apply_filters( 'wpo_wcpdf_shop_order_type', 'shop_order', $order ) === $order->get_type() && ! empty( $order->get_meta( $meta_key ) ) ) {
 					$order->delete_meta_data( $meta_key );
 					$order->save_meta_data();
 					$this->log_unmark_document_printed_to_order_notes( $document );
@@ -1572,7 +1572,7 @@ class Main {
 		$is_printed = false;
 
 		if ( ! empty( $document ) && ! empty( $order = $document->order ) ) {
-			if ( 'shop_order' === $order->get_type() && ! empty( $printed_data = $order->get_meta( "_wcpdf_{$document->slug}_printed" ) ) ) {
+			if ( apply_filters( 'wpo_wcpdf_shop_order_type', 'shop_order', $order ) === $order->get_type() && ! empty( $printed_data = $order->get_meta( "_wcpdf_{$document->slug}_printed" ) ) ) {
 				$is_printed = true;
 			}
 		}
@@ -1616,7 +1616,7 @@ class Main {
 		$data = [];
 
 		if ( ! empty( $document ) && $this->is_document_printed( $document ) && ! empty( $order = $document->order ) ) {
-			if ( 'shop_order' === $order->get_type() && ! empty( $printed_data = $order->get_meta( "_wcpdf_{$document->slug}_printed" ) ) ) {
+			if ( apply_filters( 'wpo_wcpdf_shop_order_type', 'shop_order', $order ) === $order->get_type() && ! empty( $printed_data = $order->get_meta( "_wcpdf_{$document->slug}_printed" ) ) ) {
 				$data = $printed_data;
 			}
 		}

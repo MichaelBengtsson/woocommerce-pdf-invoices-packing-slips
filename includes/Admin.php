@@ -457,9 +457,9 @@ class Admin {
 	 */
 	public function add_meta_boxes( $wc_screen_id, $wc_order ) {
 		if ( class_exists( CustomOrdersTableController::class ) && function_exists( 'wc_get_container' ) && wc_get_container()->get( CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled() ) {
-			$screen_id = wc_get_page_screen_id( 'shop-order' );
+			$screen_id = apply_filters( 'wpo_wcpdf_metabox_screen_id', wc_get_page_screen_id( 'shop-order' ) );
 		} else {
-			$screen_id = 'shop_order';
+			$screen_id = apply_filters( 'wpo_wcpdf_metabox_screen_id', 'shop_order' );
 		}
 
 		if ( $wc_screen_id != $screen_id ) {
@@ -974,7 +974,7 @@ class Admin {
 
 		$order_type = $order->get_type();
 
-		if ( $order_type == 'shop_order' ) {
+		if ( $order_type == apply_filters( 'wpo_wcpdf_shop_order_type', 'shop_order', $order ) ) {
 			// bail if this is not an actual 'Save order' action
 			if ( ! isset( $_POST['action'] ) || $_POST['action'] != 'editpost' ) {
 				return;
@@ -1090,7 +1090,8 @@ class Admin {
 	 */
 	public function is_order_page() {
 		$screen = get_current_screen();
-		if ( ! is_null( $screen ) && in_array( $screen->id, array( 'shop_order', 'edit-shop_order', 'woocommerce_page_wc-orders' ) ) ) {
+		$valid_order_screens = apply_filters( 'wpo_wcpdf_valid_shop_order_screens', array( 'shop_order', 'edit-shop_order', 'woocommerce_page_wc-orders' ) );
+		if ( ! is_null( $screen ) && in_array( $screen->id, $valid_order_screens ) ) {
 			return true;
 		} else {
 			return false;

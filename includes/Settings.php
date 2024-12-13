@@ -259,7 +259,7 @@ class Settings {
 				if ( empty( $order ) ) {
 					wp_send_json_error( array( 'error' => esc_html__( 'Order not found!', 'woocommerce-pdf-invoices-packing-slips' ) ) );
 				}
-				if ( ! in_array( $order->get_type(), array( 'shop_order', 'shop_order_refund' ) ) ) {
+				if ( ! in_array( $order->get_type(), apply_filters( 'wpo_wcpdf_valid_shop_order_types', array( 'shop_order', 'shop_order_refund' ), $order ) ) ) {
 					wp_send_json_error( array( 'error' => esc_html__( 'Object found is not an order!', 'woocommerce-pdf-invoices-packing-slips' ) ) );
 				}
 
